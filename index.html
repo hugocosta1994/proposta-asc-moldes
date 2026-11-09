@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Acompanhamento de Moldes</title>
+<meta name="description" content="Proposta para discussão, preparada para a ASC Moldes.">
+<style>
+:root{
+  --red:#EE3524;--red-d:#c4271a;--red-l:#fde8e5;
+  --navy:#222733;--navy2:#363d4d;--navy3:#4a5265;
+  --bg:#f3f4f6;--card:#ffffff;--ink:#1a1f2b;--mut:#5f6878;--line:#dfe3e8;
+  --ok:#2e8b57;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#14171f;color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+.viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.deck{position:relative;width:1280px;height:720px;flex:none;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--bg);padding:52px 72px 64px;display:none;flex-direction:column;overflow:hidden}
+.slide.on{display:flex}
+.slide.dark{background:var(--navy);color:#fff}
+
+/* tipografia */
+.kicker{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin:0 0 10px}
+h1{font-size:62px;line-height:1.05;margin:0;font-weight:800;letter-spacing:-.5px}
+h2{font-size:38px;line-height:1.15;margin:0 0 26px;font-weight:800;letter-spacing:-.3px;color:var(--navy)}
+.dark h2{color:#fff}
+h3{font-size:19px;margin:0 0 8px;color:var(--navy)}
+p{margin:0}
+.lead{font-size:20px;line-height:1.5;color:var(--mut)}
+.small{font-size:13.5px;color:var(--mut);line-height:1.5}
+b.r,.r{color:var(--red)}
+
+/* rodapé de slide */
+.foot{position:absolute;left:72px;right:72px;bottom:22px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mut)}
+.dark .foot{color:#9aa1ae}
+.foot .brand{font-weight:700;color:var(--navy)}
+.dark .foot .brand{color:#fff}
+.foot .brand i{font-style:normal;color:var(--red)}
+.fict{display:inline-block;font-size:12px;font-weight:600;color:#8f1d13;background:var(--red-l);border:1px solid #f5c3bd;padding:4px 10px;border-radius:999px}
+
+/* capa */
+.cover{justify-content:center;padding-left:96px;background:radial-gradient(circle at 85% 20%,#2e3445 0,#222733 55%)}
+.cover .bar{width:84px;height:6px;background:var(--red);border-radius:3px;margin:0 0 34px}
+.cover .wm{font-size:22px;font-weight:800;letter-spacing:.5px;margin-bottom:28px}
+.cover .wm b{color:var(--red)}
+.cover h1{font-size:68px;max-width:900px}
+.cover .sub{font-size:28px;color:#c9ced8;margin-top:16px;font-weight:300}
+.cover .by{margin-top:56px;font-size:16px;color:#aeb4c0;line-height:1.7}
+.cover .by strong{color:#fff;font-weight:600}
+.cover .stripe{position:absolute;right:0;top:0;bottom:0;width:22px;background:var(--red)}
+
+/* perguntas */
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;gap:16px;align-items:flex-start}
+.q .n{flex:none;width:38px;height:38px;border-radius:50%;background:var(--red-l);color:var(--red-d);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:17px}
+.q p{font-size:18px;line-height:1.45}
+.note{margin-top:22px;border-left:4px solid var(--red);padding:6px 0 6px 16px;font-size:16px;color:var(--mut)}
+
+/* ideia-chave */
+.big-quote{font-size:52px;line-height:1.12;font-weight:800;max-width:1050px;letter-spacing:-.5px}
+.big-quote em{font-style:normal;color:var(--red)}
+.nos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.nos div{border:1px solid #3d4456;background:#2a3040;border-radius:14px;padding:20px 22px;font-size:18px;color:#e6e9ef}
+.nos div strong{display:block;color:#fff;font-size:21px;margin-bottom:4px}
+.nos .x{display:inline-block;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;text-align:center;line-height:26px;font-weight:800;margin-bottom:10px;font-size:15px}
+
+/* fluxo */
+.flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column}
+.step .tag{font-size:12px;font-weight:700;letter-spacing:1.4px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.step h3{font-size:18px}
+.step ul{margin:6px 0 0;padding-left:18px;font-size:15px;color:var(--mut);line-height:1.5}
+.step.hl{background:var(--navy);border-color:var(--navy);color:#fff}
+.step.hl h3{color:#fff}.step.hl ul{color:#c9ced8}
+.arrow{display:flex;align-items:center;justify-content:center;color:var(--red);font-size:26px;font-weight:800}
+.phases{margin-top:26px;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;align-items:center}
+.phases .lbl{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:14px;padding:6px 12px;border-radius:999px;background:#e7eaee;color:var(--navy2);font-weight:600}
+.chip.c{background:var(--red-l);color:#8f1d13}
+.flow-note{margin-top:18px;display:flex;gap:18px}
+.flow-note div{flex:1;font-size:15px;color:var(--mut);line-height:1.5;background:#e9ecf0;border-radius:10px;padding:12px 16px}
+.flow-note strong{color:var(--navy)}
+
+/* ecrãs */
+.screen{display:grid;grid-template-columns:1fr 330px;gap:36px;flex:1;min-height:0}
+.shot{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 18px 40px rgba(20,25,35,.18);border:1px solid #cfd5dc;background:#fff;align-self:start}
+.shot .chrome{height:26px;background:#e3e6ea;display:flex;align-items:center;gap:6px;padding:0 12px}
+.shot .chrome i{width:10px;height:10px;border-radius:50%;background:#c3c8cf;display:block}
+.shot img{display:block;width:100%;height:auto}
+.screen .txt h2{font-size:32px;margin-bottom:14px}
+.screen .txt .who{font-size:13px;font-weight:700;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.screen ul{margin:0 0 18px;padding:0;list-style:none}
+.screen li{font-size:16.5px;line-height:1.45;padding:7px 0 7px 22px;position:relative;border-bottom:1px solid var(--line)}
+.screen li:before{content:"";position:absolute;left:2px;top:15px;width:8px;height:8px;border-radius:2px;background:var(--red)}
+.duo{position:relative;align-self:start}
+.duo .shot.desk{width:100%}
+.phone{position:absolute;right:-14px;bottom:-30px;width:178px;border-radius:24px;overflow:hidden;box-shadow:0 20px 40px rgba(20,25,35,.3);background:#fff}
+.phone img{display:block;width:100%;height:auto}
+
+/* confiança */
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.t{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.t .ic{width:40px;height:40px;border-radius:10px;background:var(--red-l);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.t .ic svg{width:22px;height:22px;stroke:var(--red-d);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.t p{font-size:15px;line-height:1.5;color:var(--mut)}
+
+/* como avançamos */
+.road{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px}
+.road .s{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;position:relative}
+.road .s.main{border:2px solid var(--red)}
+.road .num{font-size:13px;font-weight:700;color:var(--red);letter-spacing:1.4px;text-transform:uppercase}
+.road h3{font-size:21px;margin:6px 0 4px}
+.road .dur{font-size:14px;font-weight:700;color:var(--navy2);background:#eceef2;display:inline-block;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.road p{font-size:15px;line-height:1.5;color:var(--mut)}
+.weeks{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:18px}
+.weeks div{background:#e4e7ec;border-radius:6px;padding:7px 6px;font-size:11.5px;line-height:1.3;color:var(--navy2);text-align:center}
+.weeks div b{display:block;font-size:12px}
+.weeks div.sh{background:#fbe3c9}.weeks div.go{background:var(--red);color:#fff}
+.give{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.give div{border-radius:12px;padding:14px 18px;font-size:14.5px;line-height:1.5}
+.give .yes{background:#e9ecf0;color:var(--ink)}
+.give .no{background:var(--navy);color:#e6e9ef}
+.give strong{display:block;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+.give .no strong{color:var(--red)}
+
+/* investimento */
+.inv{display:grid;grid-template-columns:1.45fr 1fr;gap:26px}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);font-size:15.5px;vertical-align:top}
+th{background:var(--navy);color:#fff;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+td.p{white-space:nowrap;font-weight:800;color:var(--navy);text-align:right}
+tr.p0 td{background:#fff6f5}
+tr:last-child td{border-bottom:0}
+td .d{display:block;font-size:13px;color:var(--mut);margin-top:2px}
+.side .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.side .box h3{font-size:16px;margin-bottom:6px}
+.side .box p{font-size:14px;line-height:1.5;color:var(--mut)}
+.side .box.own{background:var(--navy);border-color:var(--navy)}
+.side .box.own h3{color:#fff}.side .box.own p{color:#c9ced8}
+
+/* métricas */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px}
+.k .v{font-size:34px;font-weight:800;color:var(--navy);line-height:1.1}
+.k .v.r{color:var(--red)}
+.k p{font-size:14px;line-height:1.45;color:var(--mut);margin-top:6px}
+
+/* próximos passos */
+.next{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px}
+.next div{border-top:4px solid var(--red);background:#2a3040;border-radius:0 0 12px 12px;padding:18px 18px 20px}
+.next .n{font-size:40px;font-weight:800;color:var(--red);line-height:1}
+.next h3{color:#fff;font-size:18px;margin:10px 0 6px}
+.next p{font-size:14.5px;line-height:1.5;color:#c9ced8}
+.thanks{margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end}
+.thanks .t1{font-size:40px;font-weight:800}
+.thanks .t2{font-size:15px;color:#aeb4c0;text-align:right;line-height:1.6}
+
+/* controlos */
+.ctrl{position:fixed;right:18px;bottom:16px;display:flex;align-items:center;gap:8px;z-index:20;font-family:inherit}
+.ctrl button{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.ctrl button:hover{background:var(--red)}
+.ctrl button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ctrl .cnt{color:#cfd3da;font-size:13px;min-width:54px;text-align:center;font-variant-numeric:tabular-nums}
+.prog{position:fixed;left:0;top:0;height:3px;background:var(--red);z-index:20;transition:width .25s}
+.hint{position:fixed;left:18px;bottom:22px;color:#7f8694;font-size:12px;z-index:20}
+
+/* ===== modo telemóvel / ecrã estreito: slides em fluxo, sem escala ===== */
+@media screen and (max-width:820px),screen and (orientation:portrait) and (max-width:1100px){
+  body{overflow:hidden;background:var(--bg)}
+  .viewport{display:block;overflow:hidden}
+  .deck{width:100%;height:100%;transform:none!important}
+  .slide{position:absolute;inset:0;padding:28px 16px 96px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide.cover{padding:40px 22px 96px}
+  .cover .stripe{width:8px}
+  h1,.cover h1{font-size:40px}
+  .cover .sub{font-size:21px}
+  .cover .by{margin-top:36px;font-size:15px}
+  h2{font-size:27px;margin-bottom:18px}
+  .lead{font-size:17px}
+  .big-quote{font-size:32px}
+  .qs,.nos,.trust,.road,.give,.inv,.next,.screen{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .q p{font-size:16px}
+  .flow{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg);height:30px}
+  .phases{grid-template-columns:1fr}
+  .flow-note{flex-direction:column;gap:10px}
+  .screen{gap:18px;flex:none}
+  .screen .txt h2{font-size:25px}
+  .duo{margin-bottom:24px}
+  .phone{position:static;width:170px;margin:16px auto 0;border-radius:18px}
+  .weeks{grid-template-columns:repeat(4,1fr)}
+  .k .v{font-size:27px}
+  .thanks{flex-direction:column;align-items:flex-start;gap:12px}
+  .thanks .t2{text-align:left}
+  .foot{position:static;margin-top:28px;flex-direction:column;align-items:flex-start;gap:6px}
+  .hint{display:none}
+  .ctrl{left:0;right:0;bottom:0;justify-content:center;padding:10px 0 14px;background:linear-gradient(to top,rgba(20,23,31,.92),rgba(20,23,31,.75))}
+  .prog{top:auto;bottom:0}
+}
+
+/* ===== impressão / PDF: 1 slide por página 16:9 ===== */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .viewport{position:static;display:block}
+  .deck{width:1280px;height:auto;transform:none!important}
+  .slide{display:flex!important;position:relative;width:1280px;height:720px;page-break-after:always;break-after:page;overflow:hidden}
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .ctrl,.prog,.hint{display:none!important}
+  .shot,.phone{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="viewport" id="vp">
+<main class="deck" id="deck">
+
+<!-- 1. Capa -->
+<section class="slide dark cover" aria-label="Capa">
+  <div class="stripe"></div>
+  <div class="bar"></div>
+  <div class="wm"><b>ASC</b> Moldes</div>
+  <h1>Acompanhamento de Moldes</h1>
+  <p class="sub">Proposta para discussão</p>
+  <p class="by"><strong>Proposta preparada para a ASC Moldes</strong> pela nossa equipa · novembro de 2026<br>Documento de trabalho: as hipóteses e os ecrãs servem para corrigirmos em conjunto.</p>
+</section>
+
+<!-- 2. O desafio -->
+<section class="slide" aria-label="O desafio">
+  <p class="kicker">O desafio</p>
+  <h2>Algumas perguntas que gostaríamos de vos fazer</h2>
+  <div class="qs">
+    <div class="q"><span class="n">1</span><p>Quando um cliente pergunta <strong>"em que ponto está o meu molde?"</strong>, quantos emails e chamadas são precisos até haver resposta?</p></div>
+    <div class="q"><span class="n">2</span><p>A informação sobre cada passo <strong>já existe</strong> (na encomenda, na pasta do projeto, nos programas de maquinação, na guia de transporte), mas está em sítios diferentes?</p></div>
+    <div class="q"><span class="n">3</span><p>O conjunto dos moldes em curso ainda se acompanha num <strong>quadro ou folha atualizados à mão</strong>?</p></div>
+    <div class="q"><span class="n">4</span><p>A direção consegue saber, <strong>num minuto</strong>, que moldes estão atrasados e em que fase, sem ter de perguntar a ninguém?</p></div>
+  </div>
+  <p class="note">São hipóteses nossas, formuladas de fora. Contamos convosco para as confirmar ou corrigir.</p>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>2</span></div>
+</section>
+
+<!-- 3. Ideia-chave -->
+<section class="slide dark" aria-label="A ideia-chave" style="justify-content:center">
+  <p class="kicker">A ideia-chave</p>
+  <p class="big-quote">Não vos pedimos trabalho novo: <em>usamos a informação que já produzem.</em></p>
+  <div class="nos">
+    <div><span class="x">✕</span><strong>Sem tablets</strong>nem leitores de códigos na fábrica.</div>
+    <div><span class="x">✕</span><strong>Sem registos diários</strong>ninguém tem de "picar" fases.</div>
+    <div><span class="x">✕</span><strong>Sem mudar processos</strong>cada um continua a trabalhar como hoje.</div>
+  </div>
+  <p class="lead" style="margin-top:30px;color:#c9ced8">O sistema lê o que já existe, deduz a fase de cada molde e só pergunta quando não tem a certeza.</p>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>3</span></div>
+</section>
+
+<!-- 4. Como funciona -->
+<section class="slide" aria-label="Como funciona">
+  <p class="kicker">Como funciona</p>
+  <h2>Ler o que já existe, mostrar em três ecrãs</h2>
+  <div class="flow">
+    <div class="step"><span class="tag">1 · O que já produzem</span><h3>Sistemas existentes</h3><ul><li>Encomenda (programa de gestão ou faturação)</li><li>Pasta do projeto</li><li>Programas de maquinação</li><li>Guia de transporte</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="tag">2 · Leitura automática</span><h3>Só nomes e datas</h3><ul><li>Apenas leitura</li><li>Só metadados (quem, quando, que pasta)</li><li>Nunca abre nem copia desenhos</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="tag">3 · Dedução</span><h3>Fase de cada molde</h3><ul><li>Com o "porquê" desta fase</li><li>Se houver dúvida, pergunta com 1 clique</li><li>Cada resposta ensina o sistema</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="step hl"><span class="tag">4 · Três públicos</span><h3>Quem vê o quê</h3><ul><li>Clientes: vista PT/EN</li><li>Direção: painel de prazos</li><li>Fábrica: quadro em TV</li></ul></div>
+  </div>
+  <div class="phases">
+    <span class="lbl">Fases internas</span>
+    <div class="chips"><span class="chip">Pedido</span><span class="chip">Desenho aprovado</span><span class="chip">CAM</span><span class="chip">Maquinação</span><span class="chip">Acabamento</span><span class="chip">Prova</span><span class="chip">Ajustes (pode repetir)</span><span class="chip">Expedição</span></div>
+    <span class="lbl">O cliente vê</span>
+    <div class="chips"><span class="chip c">Encomenda confirmada</span><span class="chip c">Engenharia</span><span class="chip c">Em produção</span><span class="chip c">Prova / ajustes</span><span class="chip c">Expedido</span></div>
+  </div>
+  <div class="flow-note">
+    <div><strong>Modo sombra primeiro.</strong> Durante 2 a 3 semanas o sistema funciona só para a direção, que o compara com a realidade. Nada fica visível aos clientes até estar afinado.</div>
+    <div><strong>Fases ajustáveis.</strong> As fases acima são um ponto de partida e configuram-se à maneira de trabalhar da ASC.</div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>4</span></div>
+</section>
+
+<!-- 5. Vista cliente -->
+<section class="slide" aria-label="Ecrã: vista cliente">
+  <div class="screen">
+    <div class="duo">
+      <div class="shot desk"><div class="chrome"><i></i><i></i><i></i></div><img src="img/02-vista-cliente.png" alt="Vista cliente no computador, com as 5 fases de um molde e a data prevista de entrega (dados fictícios)"></div>
+      <div class="phone"><img src="img/02-vista-cliente-telemovel-en.png" alt="Vista cliente no telemóvel, em inglês (dados fictícios)"></div>
+    </div>
+    <div class="txt">
+      <p class="who">Para os clientes da ASC</p>
+      <h2>"Em que ponto está o meu molde?" sem ter de perguntar</h2>
+      <ul>
+        <li>5 fases simples e data prevista de entrega</li>
+        <li>Em português e inglês, no computador ou telemóvel</li>
+        <li>Acesso por link no email, sem palavra-passe; cada cliente só vê os seus projetos</li>
+        <li>Email automático quando a fase ou a data mudam</li>
+        <li>Só se publica o que tem evidência</li>
+      </ul>
+      <span class="fict">Dados fictícios, apenas ilustrativos</span>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>5</span></div>
+</section>
+
+<!-- 6. Quadro de fábrica -->
+<section class="slide" aria-label="Ecrã: quadro de fábrica">
+  <div class="screen">
+    <div class="shot"><div class="chrome"><i></i><i></i><i></i></div><img src="img/01b-quadro-fabrica.png" alt="Quadro de fábrica para TV com os moldes em curso por fase (dados fictícios)"></div>
+    <div class="txt">
+      <p class="who">Para a fábrica</p>
+      <h2>Um quadro em TV que se atualiza sozinho</h2>
+      <ul>
+        <li>Substitui o quadro branco: ninguém escreve nada</li>
+        <li>Moldes em curso por fase, com o prazo de cada um</li>
+        <li>Cores simples: no prazo, prazo próximo, atrasado</li>
+        <li>Ecrã só de leitura, pensado para ver ao longe</li>
+      </ul>
+      <span class="fict">Dados fictícios, apenas ilustrativos</span>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>6</span></div>
+</section>
+
+<!-- 7. Painel da direção -->
+<section class="slide" aria-label="Ecrã: painel da direção">
+  <div class="screen">
+    <div class="shot"><div class="chrome"><i></i><i></i><i></i></div><img src="img/03-painel-direcao.png" alt="Painel da direção com projetos por fase, atrasos e entregas a tempo (dados fictícios)"></div>
+    <div class="txt">
+      <p class="who">Para a administração</p>
+      <h2>Prazos e entregas num minuto</h2>
+      <ul>
+        <li>Quantos moldes estão em curso e em que fase</li>
+        <li>Quais estão atrasados e há quanto tempo</li>
+        <li>Entregas a tempo, mês a mês</li>
+        <li>Tempo médio por fase, para ver onde se perde tempo</li>
+        <li>Cada número mostra de onde vem o dado</li>
+      </ul>
+      <span class="fict">Dados fictícios, apenas ilustrativos</span>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>7</span></div>
+</section>
+
+<!-- 8. Consola de exceções -->
+<section class="slide" aria-label="Ecrã: consola de exceções">
+  <div class="screen">
+    <div class="shot"><div class="chrome"><i></i><i></i><i></i></div><img src="img/01-consola-excecoes.png" alt="Consola de exceções com os casos em que o sistema pede confirmação (dados fictícios)"></div>
+    <div class="txt">
+      <p class="who">Para a direção / planeamento</p>
+      <h2>E quando o sistema não tem a certeza?</h2>
+      <ul>
+        <li>Pergunta, e mostra as provas que tem</li>
+        <li>Um clique para confirmar ou corrigir</li>
+        <li>Cada correção vira regra: não volta a perguntar o mesmo</li>
+        <li>Objetivo: até 15 minutos por semana</li>
+        <li>Notas ao cliente escrevem-se aqui, em vez do email habitual</li>
+      </ul>
+      <span class="fict">Dados fictícios, apenas ilustrativos</span>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>8</span></div>
+</section>
+
+<!-- 9. Segurança e confiança -->
+<section class="slide" aria-label="Segurança e confiança">
+  <p class="kicker">Segurança e confiança</p>
+  <h2>Garantias que ficam escritas no contrato</h2>
+  <div class="trust">
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Só leitura</h3><p>Não escrevemos em nenhum sistema e não alteramos máquinas nem ficheiros. A vossa informática pode inspecionar o programa instalado e o registo de tudo o que é enviado.</p></div>
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h3>Os desenhos nunca saem da ASC</h3><p>Lemos apenas nomes e datas. Nunca abrimos, copiamos nem enviamos desenhos, ficheiros CAD/CAM, programas de maquinação ou conteúdos de email.</p></div>
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg></div><h3>Dados na UE</h3><p>Alojamento na União Europeia, ligação só de saída e sem portas abertas na vossa rede. Contrato RGPD e de confidencialidade.</p></div>
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4l5 5M21 4l-5 5"/></svg></div><h3>Nunca para avaliar pessoas</h3><p>Os dados de máquinas e horas nunca são usados para avaliar trabalhadores. Os indicadores são só por projeto, fase e máquina.</p></div>
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg></div><h3>O código é da ASC</h3><p>Com o pagamento integral, o código, a configuração, os dados e a documentação passam para a ASC, com manual de operação e passagem de conhecimento.</p></div>
+    <div class="t"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></div><h3>Dados sempre vossos</h3><p>Os dados da ASC podem ser exportados a qualquer momento. Sem dependência de nós para continuar a usar o sistema.</p></div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>9</span></div>
+</section>
+
+<!-- 10. Como avançamos -->
+<section class="slide" aria-label="Como avançamos">
+  <p class="kicker">Como avançamos</p>
+  <h2>Começar pequeno, medir, e só depois crescer</h2>
+  <div class="road">
+    <div class="s"><span class="num">Passo 0</span><h3>Levantamento técnico</h3><span class="dur">~1 semana</span><p>Com a vossa informática: que sistemas existem e o que permitem ler. Daqui sai o plano concreto da Fase 1, ajustado ao que já têm.</p></div>
+    <div class="s main"><span class="num">Fase 1 · Piloto</span><h3>3 fontes de informação</h3><span class="dur">6 a 8 semanas</span><p>Encomenda + pasta de projetos + guia de transporte. Vista cliente, painel da direção, quadro em TV e consola de exceções. Modo sombra antes de abrir a 3 a 5 clientes piloto.</p></div>
+    <div class="s"><span class="num">Depois</span><h3>Somar fontes, uma a uma</h3><span class="dur">ao vosso ritmo</span><p>Máquinas CNC, email de aprovação, Excel de planeamento, software de produção. Cada fonte acrescenta-se sem refazer o que já existe.</p></div>
+  </div>
+  <div class="weeks" aria-label="Calendário indicativo da Fase 1">
+    <div><b>S1</b>Preparação</div><div><b>S2</b>Ligação às fontes</div><div><b>S3</b>Ligação às fontes</div><div><b>S4</b>Demonstração funcional</div><div><b>S5</b>Ecrãs e testes</div><div class="sh"><b>S6</b>Modo sombra</div><div class="sh"><b>S7</b>Modo sombra</div><div class="go"><b>S8</b>Abertura a clientes</div>
+  </div>
+  <div class="give">
+    <div class="yes"><strong>O que pedimos à ASC</strong>Um computador sempre ligado na rede (ou um pequeno mini-PC), acessos só de leitura, contacto com a informática, até 15 min/semana para exceções e 3 a 5 clientes piloto.</div>
+    <div class="no"><strong>O que não pedimos</strong>Tablets, códigos QR, registos diários ou mudanças de processo.</div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>10</span></div>
+</section>
+
+<!-- 11. Como medimos o sucesso -->
+<section class="slide" aria-label="Como medimos o sucesso">
+  <p class="kicker">Como medimos o sucesso</p>
+  <h2>Metas claras, fixadas convosco no fim do modo sombra</h2>
+  <div class="kpis">
+    <div class="k"><div class="v r">0</div><p>tarefas novas para a equipa</p></div>
+    <div class="k"><div class="v">≥ 85%</div><p>das fases deduzidas sem intervenção no fim do piloto (≥ 70% no fim do modo sombra)</p></div>
+    <div class="k"><div class="v">≤ 15 min</div><p>por semana da direção em exceções</p></div>
+    <div class="k"><div class="v">~50%</div><p>menos pedidos de estado dos clientes piloto</p></div>
+    <div class="k"><div class="v">≤ 2%</div><p>das fases mostradas ao cliente com necessidade de correção</p></div>
+    <div class="k"><div class="v">&lt; 1 min</div><p>para responder "quantos moldes atrasados e em que fase"</p></div>
+    <div class="k"><div class="v">3 de 5</div><p>clientes piloto consultam a vista pelo menos 1 vez por semana</p></div>
+    <div class="k"><div class="v">TV</div><p>o quadro branco substituído pelo quadro que se atualiza sozinho</p></div>
+  </div>
+  <p class="note">A vista cliente só abre se, no fim do modo sombra, as exceções estiverem dentro do alvo. As entregas a tempo acompanham-se como tendência, sem promessa de ganho no piloto.</p>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>11</span></div>
+</section>
+
+<!-- 12. Próximos passos -->
+<section class="slide dark" aria-label="Próximos passos">
+  <p class="kicker">Próximos passos</p>
+  <h2>Como podemos seguir</h2>
+  <div class="next">
+    <div><span class="n">1</span><h3>Conversa de 30 a 45 min</h3><p>Corrigir as hipóteses e os ecrãs: onde vive hoje cada informação e o que falta.</p></div>
+    <div><span class="n">2</span><h3>30 min com a informática</h3><p>Perceber que sistemas existem. Nesta fase não pedimos acessos nem palavras-passe.</p></div>
+    <div><span class="n">3</span><h3>Levantamento técnico</h3><p>Cerca de 1 semana. Sai o plano confirmado da Fase 1, com âmbito, calendário e proposta comercial.</p></div>
+    <div><span class="n">4</span><h3>Fase 1</h3><p>6 a 8 semanas, com modo sombra e abertura a 3 a 5 clientes piloto escolhidos pela ASC.</p></div>
+  </div>
+  <div class="thanks">
+    <div class="t1">Obrigado.</div>
+    <div class="t2">Proposta preparada para a ASC Moldes<br>pela nossa equipa · novembro de 2026</div>
+  </div>
+  <div class="foot"><span class="brand"><i>ASC</i> Moldes · Acompanhamento de Moldes</span><span>12</span></div>
+</section>
+
+</main>
+</div>
+
+<div class="hint" id="hint">Setas ← → para navegar</div>
+<nav class="ctrl" aria-label="Navegação">
+  <button id="prev" aria-label="Slide anterior">‹</button>
+  <span class="cnt" id="cnt">1 / 12</span>
+  <button id="next" aria-label="Slide seguinte">›</button>
+</nav>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var deck=document.getElementById('deck'),cnt=document.getElementById('cnt'),prog=document.getElementById('prog');
+  var narrowMQ=window.matchMedia('screen and (max-width:820px),screen and (orientation:portrait) and (max-width:1100px)');
+  var i=0;
+  function fit(){
+    if(narrowMQ.matches){deck.style.transform='none';return;}
+    var s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+    deck.style.transform='scale('+s+')';
+  }
+  function go(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    slides[i].classList.remove('on');i=n;slides[i].classList.add('on');
+    slides[i].scrollTop=0;
+    cnt.textContent=(i+1)+' / '+slides.length;
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    try{history.replaceState(null,'','#'+(i+1));}catch(e){}
+  }
+  var h=parseInt((location.hash||'').slice(1),10);
+  slides[0].classList.add('on');
+  go(isNaN(h)?0:h-1);
+  fit();
+  window.addEventListener('resize',fit);
+  if(narrowMQ.addEventListener)narrowMQ.addEventListener('change',fit);
+  document.getElementById('prev').onclick=function(e){e.stopPropagation();go(i-1);};
+  document.getElementById('next').onclick=function(e){e.stopPropagation();go(i+1);};
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();go(i+1);}
+    else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();go(i-1);}
+    else if(k==='Home'){go(0);}else if(k==='End'){go(slides.length-1);}
+  });
+  // clique: terço esquerdo recua, resto avança (só em ecrã largo)
+  document.getElementById('vp').addEventListener('click',function(e){
+    if(narrowMQ.matches)return;
+    if(window.getSelection&&String(window.getSelection()).length)return;
+    if(e.clientX<window.innerWidth/3)go(i-1);else go(i+1);
+  });
+  // deslizar no telemóvel
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null)return;
+    var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){go(dx<0?i+1:i-1);}
+    x0=null;
+  },{passive:true});
+  setTimeout(function(){var hi=document.getElementById('hint');if(hi)hi.style.display='none';},6000);
+})();
+</script>
+</body>
+</html>
